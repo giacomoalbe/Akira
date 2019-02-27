@@ -21,7 +21,5 @@ install:
   - npm i -g @elementaryos/houston
 
 script:
-  - houston ci
-    --type app
-    --name-domain com.github.akiraux.akira
-    --name-human Akira
+- houston ci
+ --name-domain com.github.akiraux.akira
