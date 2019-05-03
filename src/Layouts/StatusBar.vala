@@ -20,6 +20,8 @@
 */
 
 public class Akira.Layouts.StatusBar : Gtk.Grid {
+	public weak Akira.Window window { get; construct; }
+
 	public bool toggled {
 		get {
 			return visible;
@@ -29,18 +31,30 @@ public class Akira.Layouts.StatusBar : Gtk.Grid {
 		}
 	}
 
-	public StatusBar () {
-		Object (toggled: true);
+    private string status;
+
+	public StatusBar (Akira.Window main_window) {
+		Object (
+            window: main_window,
+            toggled: true
+        );
 	}
 
 	construct {
 		get_style_context ().add_class ("statusbar");
-		
-		var label = new Gtk.Label ("Status Bar");
+
+        status = "Status Bar";
+
+		var label = new Gtk.Label (status);
 		label.halign = Gtk.Align.CENTER;
 		label.margin = 6;
 
 		attach (label, 0, 0, 1, 1);
+
+        window.event_bus.item_moved.connect((x,y,w,h) => {
+            status = "x: %f y: %f w: %f h:%f".printf(x,y,w,h);
+            label.label = status;
+        });
 	}
 
 	public void toggle () {

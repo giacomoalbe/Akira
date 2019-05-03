@@ -38,8 +38,8 @@ public class Akira.Layouts.MainWindow : Gtk.Grid {
 	construct {
 		left_sidebar = new Akira.Layouts.LeftSideBar (window);
 		right_sidebar = new Akira.Layouts.RightSideBar (window);
-		statusbar = new Akira.Layouts.StatusBar ();
-		main_canvas = new Akira.Layouts.MainCanvas ();
+		statusbar = new Akira.Layouts.StatusBar (window);
+		main_canvas = new Akira.Layouts.MainCanvas (window);
 
 		grid = new Gtk.Grid ();
 		pane = new Gtk.Paned (Gtk.Orientation.HORIZONTAL);

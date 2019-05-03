@@ -19,12 +19,17 @@
 * Authored by: Alessandro "Alecaddd" Castellani <castellani.ale@gmail.com>
 */
 public class Akira.Layouts.MainCanvas : Gtk.Grid {
+	public weak Akira.Window window { get; construct; }
+
 	public Gtk.ScrolledWindow main_scroll;
 	public Akira.Lib.Canvas canvas;
 	public Gtk.Allocation main_window_size;
 
-	public MainCanvas () {
-		Object (orientation: Gtk.Orientation.VERTICAL);
+	public MainCanvas (Akira.Window main_window) {
+		Object (
+            window: main_window,
+            orientation: Gtk.Orientation.VERTICAL
+        );
 	}
 
 	construct {
@@ -32,9 +37,11 @@ public class Akira.Layouts.MainCanvas : Gtk.Grid {
 		main_scroll = new Gtk.ScrolledWindow (null, null);
 		main_scroll.expand = true;
 
-		canvas = new Akira.Lib.Canvas ();
+        print ("MainWindow width: %f height: %f\n", main_window_size.width, main_window_size.height);
+
+		canvas = new Akira.Lib.Canvas (window);
 		canvas.set_size_request (main_window_size.width, main_window_size.height);
-		canvas.set_bounds (0, 0, 10000, 10000);
+		canvas.set_bounds (0.0, 0.0, 600.0, 1000.0);
 		canvas.set_scale (1.0);
 
 		main_scroll.add (canvas);
@@ -44,10 +51,10 @@ public class Akira.Layouts.MainCanvas : Gtk.Grid {
 
 	public Goo.CanvasRect add_rect () {
 		var root = canvas.get_root_item ();
-		var rect = new Goo.CanvasRect (null, 100.0, 100.0, 400.0, 400.0,
+		var rect = new Goo.CanvasRect (null, 50.0, 50.0, 50.0, 50.0,
 									"line-width", 5.0,
-									"radius-x", 100.0,
-									"radius-y", 100.0,
+									"radius-x", 0.0,
+									"radius-y", 0.0,
 									"stroke-color", "#f37329",
 									"fill-color", "#ffa154", null);
 		rect.set ("parent", root);

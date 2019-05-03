@@ -21,6 +21,7 @@
 public class Akira.Services.EventBus : Object {
     public signal void update_icons_style ();
     public signal void align_items (string align_action);
+    public signal void item_moved (double x, double w, double new_width, double new_height);
 
     public EventBus () {
         Object ();
