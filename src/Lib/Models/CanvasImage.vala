@@ -27,6 +27,7 @@ public class Akira.Lib.Models.CanvasImage : Goo.CanvasImage, CanvasItem {
 
     public bool selected { get; set; }
     public bool locked { get; set; }
+    public int z_index { get; set; }
 
     public double rotation { get; set; }
 

@@ -37,6 +37,7 @@ public interface Akira.Lib.Models.CanvasItem : Goo.CanvasItemSimple, Goo.CanvasI
 
     public abstract bool selected { get; set; }
     public abstract bool locked { get; set; default = false; }
+    public abstract int z_index { get; set; }
 
     // Transform Panel attributes.
     public abstract double opacity { get; set; }
@@ -100,6 +101,14 @@ public interface Akira.Lib.Models.CanvasItem : Goo.CanvasItemSimple, Goo.CanvasI
         item.set ("opacity", 100.0);
         item.set ("fill-alpha", 255);
         item.set ("stroke-alpha", 255);
+
+        update_z_index (item);
+    }
+
+    public static void update_z_index (Goo.CanvasItem item) {
+        var z_index = item.get_canvas ().get_root_item ().find_child (item);
+
+        item.set ("z_index", z_index);
     }
 
     public virtual void reset_colors () {
