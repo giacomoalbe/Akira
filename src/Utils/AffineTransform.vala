@@ -272,13 +272,16 @@ public class Akira.Utils.AffineTransform : Object {
         update_origin_x &= !delta_x_is_negative;
         update_origin_y &= !delta_y_is_negative;
 
-        if (delta_x_is_negative && !last_x_update_done) {
+        if (delta_x_is_negative && new_width > 0 && !last_x_update_done) {
+            debug (@"Initial x: $(initial_x) Initial y: $(initial_y)");
             selected_item.translate (initial_width - delta_x_accumulator, 0);
+            delta_x_accumulator = initial_width;
             last_x_update_done = true;
         }
 
-        if (delta_y_is_negative && !last_y_update_done) {
+        if (delta_y_is_negative && new_height > 0 && !last_y_update_done) {
             selected_item.translate (0, initial_height - delta_y_accumulator);
+            delta_y_accumulator = initial_height;
             last_y_update_done = true;
         }
 
