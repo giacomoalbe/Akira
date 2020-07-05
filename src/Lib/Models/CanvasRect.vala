@@ -82,6 +82,8 @@ public class Akira.Lib.Models.CanvasRect : Goo.CanvasRect, Models.CanvasItem {
 
     public double initial_relative_x { get; set; }
     public double initial_relative_y { get; set; }
+    public double initial_width { get; set; }
+    public double initial_height { get; set; }
 
     // Knows if an item was created or loaded for ordering purpose.
     public bool loaded { get; set; default = false; }

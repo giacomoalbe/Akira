@@ -69,6 +69,8 @@ public class Akira.Lib.Managers.SelectedBoundManager : Object {
 
             selected_item.store_relative_position ();
 
+            debug (@"Set intial coordinates");
+
             delta_x_accumulator = 0.0;
             delta_y_accumulator = 0.0;
 
@@ -78,8 +80,9 @@ public class Akira.Lib.Managers.SelectedBoundManager : Object {
             initial_width = selected_item.get_coords ("width");
             initial_height = selected_item.get_coords ("height");
 
+            initial_rotation = (int) selected_item.rotation;
+
             if (selected_item.artboard != null) {
-                initial_rotation = (int) selected_item.rotation;
             }
 
             return;
@@ -88,8 +91,8 @@ public class Akira.Lib.Managers.SelectedBoundManager : Object {
         initial_event_x = event_x;
         initial_event_y = event_y;
 
-        initial_width = select_bb.x2 - select_bb.x1;
-        initial_height = select_bb.y2 - select_bb.y1;
+        //initial_width = select_bb.x2 - select_bb.x1;
+        //initial_height = select_bb.y2 - select_bb.y1;
     }
 
     public void transform_bound (double event_x, double event_y, Managers.NobManager.Nob selected_nob) {
