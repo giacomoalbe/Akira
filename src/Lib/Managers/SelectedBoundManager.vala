@@ -42,6 +42,8 @@ public class Akira.Lib.Managers.SelectedBoundManager : Object {
     private double delta_y_accumulator;
     private double initial_width;
     private double initial_height;
+    private double initial_item_x;
+    private double initial_item_y;
     private int initial_rotation;
 
     public SelectedBoundManager (Akira.Lib.Canvas canvas) {
@@ -80,6 +82,9 @@ public class Akira.Lib.Managers.SelectedBoundManager : Object {
             initial_width = selected_item.get_coords ("width");
             initial_height = selected_item.get_coords ("height");
 
+            initial_item_x = selected_item.get_coords ("x");
+            initial_item_y = selected_item.get_coords ("y");
+
             initial_rotation = (int) selected_item.rotation;
 
             if (selected_item.artboard != null) {
@@ -107,9 +112,10 @@ public class Akira.Lib.Managers.SelectedBoundManager : Object {
                 Utils.AffineTransform.move_from_event (
                     event_x, event_y,
                     ref initial_event_x, ref initial_event_y,
-                    ref delta_x_accumulator, ref delta_y_accumulator,
+                    ref initial_item_x, ref initial_item_y,
                     selected_item
                 );
+
                 update_selected_items ();
                 break;
 
@@ -126,7 +132,7 @@ public class Akira.Lib.Managers.SelectedBoundManager : Object {
                 Utils.AffineTransform.scale_from_event (
                     event_x, event_y,
                     ref initial_event_x, ref initial_event_y,
-                    ref delta_x_accumulator, ref delta_y_accumulator,
+                    ref initial_item_x, ref initial_item_y,
                     initial_width, initial_height,
                     selected_nob,
                     selected_item
@@ -305,25 +311,25 @@ public class Akira.Lib.Managers.SelectedBoundManager : Object {
 
             switch (event.keyval) {
                 case Gdk.Key.Up:
-                    if (item is Models.CanvasEllipse && item.artboard == null) {
+                    if (item is Models.CanvasEllipse) {
                         amount--;
                     }
                     Utils.AffineTransform.set_position (item, null, position["y"] - amount);
                     break;
                 case Gdk.Key.Down:
-                    if (item is Models.CanvasEllipse && item.artboard == null) {
+                    if (item is Models.CanvasEllipse) {
                         amount++;
                     }
                     Utils.AffineTransform.set_position (item, null, position["y"] + amount);
                     break;
                 case Gdk.Key.Right:
-                    if (item is Models.CanvasEllipse && item.artboard == null) {
+                    if (item is Models.CanvasEllipse) {
                         amount++;
                     }
                     Utils.AffineTransform.set_position (item, position["x"] + amount);
                     break;
                 case Gdk.Key.Left:
-                    if (item is Models.CanvasEllipse && item.artboard == null) {
+                    if (item is Models.CanvasEllipse) {
                         amount--;
                     }
                     Utils.AffineTransform.set_position (item, position["x"] - amount);

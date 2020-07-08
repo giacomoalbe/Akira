@@ -53,6 +53,20 @@ public class Akira.Utils.AffineTransform : Object {
 
     public static void set_position (CanvasItem item, double? x = null, double? y = null) {
         if (item.artboard != null) {
+          /*
+          var artboard_origin_x = 0.0;
+          var artboard_origin_y = 0.0;
+
+          item.canvas.convert_from_item_space (item.artboard, ref artboard_origin_x, ref artboard_origin_y);
+
+          // x and y are relative to the artboard containing
+          // the items, so we need to take into account the
+          // position of the artboard to compute the actual
+          // (canvas wise) position of the item
+          new_x += x != null ? artboard_origin_x : 0;
+          new_y += y != null ? artboard_origin_y : 0;
+          */
+
           var delta_x = x != null ? x - item.relative_x : 0.0;
           var delta_y = y != null ? y - item.relative_y : 0.0;
 
@@ -79,8 +93,8 @@ public class Akira.Utils.AffineTransform : Object {
         double y,
         ref double initial_x,
         ref double initial_y,
-        ref double delta_x_accumulator,
-        ref double delta_y_accumulator,
+        ref double initial_item_x,
+        ref double initial_item_y,
         CanvasItem selected_item
     ) {
         var x_relative = x;
@@ -109,13 +123,8 @@ public class Akira.Utils.AffineTransform : Object {
         double delta_x = GLib.Math.round (x_relative - initial_x_relative);
         double delta_y = GLib.Math.round (y_relative - initial_y_relative);
 
-        delta_x_accumulator += delta_x;
-        delta_y_accumulator += delta_y;
-
-        selected_item.move (delta_x, delta_y);
-
-        initial_x = x;
-        initial_y = y;
+        selected_item.set ("x", initial_item_x + delta_x);
+        selected_item.set ("y", initial_item_y + delta_y);
     }
 
     public static void scale_from_event (
@@ -123,8 +132,8 @@ public class Akira.Utils.AffineTransform : Object {
         double y,
         ref double initial_x,
         ref double initial_y,
-        ref double delta_x_accumulator,
-        ref double delta_y_accumulator,
+        ref double initial_item_x,
+        ref double initial_item_y,
         double initial_width,
         double initial_height,
         NobManager.Nob selected_nob,
@@ -165,17 +174,11 @@ public class Akira.Utils.AffineTransform : Object {
         double origin_move_delta_x = 0;
         double origin_move_delta_y = 0;
 
-        double item_width = initial_width;
-        double item_height = initial_height;
-
         double new_width = -1;
         double new_height = -1;
 
         bool update_origin_x = false;
         bool update_origin_y = false;
-
-        bool delta_x_is_negative = false;
-        bool delta_y_is_negative = false;
 
         switch (selected_nob) {
             case NobManager.Nob.TOP_LEFT:
@@ -263,69 +266,24 @@ public class Akira.Utils.AffineTransform : Object {
                 break;
         }
 
-        origin_move_delta_x = (item_width - new_width);
-        origin_move_delta_y = (item_height - new_height);
+        origin_move_delta_x = (initial_width - new_width);
+        origin_move_delta_y = (initial_height - new_height);
 
-        delta_x_is_negative = (initial_width - origin_move_delta_x) < -1;
-        delta_y_is_negative = (initial_height - origin_move_delta_y) < -1;
+        double new_item_x = update_origin_x ? initial_item_x + origin_move_delta_x : initial_item_x;
+        double new_item_y = update_origin_y ? initial_item_y + origin_move_delta_y : initial_item_y;
 
-        update_origin_x &= !delta_x_is_negative;
-        update_origin_y &= !delta_y_is_negative;
-
-        if (delta_x_is_negative && new_width > 0 && !last_x_update_done) {
-            debug (@"Initial x: $(initial_x) Initial y: $(initial_y)");
-            selected_item.translate (initial_width - delta_x_accumulator, 0);
-            delta_x_accumulator = initial_width;
-            last_x_update_done = true;
+        if (update_origin_x && origin_move_delta_x > initial_width) {
+            new_item_x = initial_item_x + initial_width;
         }
 
-        if (delta_y_is_negative && new_height > 0 && !last_y_update_done) {
-            selected_item.translate (0, initial_height - delta_y_accumulator);
-            delta_y_accumulator = initial_height;
-            last_y_update_done = true;
+        if (update_origin_y && origin_move_delta_y > initial_height) {
+            new_item_y = initial_item_y + initial_height;
         }
 
-        if (update_origin_x) {
-            selected_item.translate (origin_move_delta_x - delta_x_accumulator, 0);
-            delta_x_accumulator = origin_move_delta_x;
-            last_x_update_done = false;
-        }
-
-        if (update_origin_y) {
-            selected_item.translate (0, origin_move_delta_y - delta_y_accumulator);
-            delta_y_accumulator = origin_move_delta_y;
-            last_y_update_done = false;
-        }
-
-        /*
-        if (update_origin_y || update_origin_x) {
-            selected_item.move (
-                origin_move_delta_x - delta_x_accumulator,
-                origin_move_delta_y - delta_y_accumulator
-            );
-
-            delta_x_accumulator = origin_move_delta_x;
-            delta_y_accumulator = origin_move_delta_y;
-        }
-        */
-
+        selected_item.set ("x", new_item_x);
+        selected_item.set ("y", new_item_y);
 
         set_size (new_width, new_height, selected_item);
-
-        // Before translating, recover the original "canvas" position of
-        // initial_event, in order to convert it to the "new" translated
-        // item space after the transformation has been applied.
-        //canvas.convert_from_item_space (selected_item, ref initial_x, ref initial_y);
-
-        // The CanvasItem.move function expects delta to be the difference
-        // between current position and the initial movement one,
-        // which is not the case for scaling, since the delta
-        // is calculated again at each iteration, so the we should
-        // update the initial_relative coordinate each time we call
-        // move from here
-        //selected_item.store_relative_position ();
-
-        //canvas.convert_to_item_space (selected_item, ref initial_x, ref initial_y);
     }
 
     public static void rotate_from_event (

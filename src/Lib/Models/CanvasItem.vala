@@ -164,7 +164,11 @@ public interface Akira.Lib.Models.CanvasItem : Goo.CanvasItemSimple, Goo.CanvasI
 
             // Keep the item always in the origin
             // move the entire coordinate system every time
-            transform.translate (_x, _y);
+            debug (@"Item positioned at: ($(_x), $(_y))");
+
+            this.set ("x", _x);
+            this.set ("y", _y);
+            //transform.translate (_x, _y);
 
             /*
             // We only need to take into account the rotation relative
@@ -185,8 +189,15 @@ public interface Akira.Lib.Models.CanvasItem : Goo.CanvasItemSimple, Goo.CanvasI
 
     public virtual void move (
         double delta_x, double delta_y,
-        double delta_x_accumulator = 0.0, double delta_y_accumulator = 0.0) {
+        double initial_x = 0.0, double initial_y = 0.0) {
+        // double delta_x_accumulator = 0.0, double delta_y_accumulator = 0.0) {
 
+        this.set ("x", initial_x - delta_x);
+        this.set ("x", initial_y - delta_y);
+
+        // translate (delta_x, delta_y);
+
+        /*
         if (artboard != null) {
             var transformed_delta_x = delta_x_accumulator;
             var transformed_delta_y = delta_y_accumulator;
@@ -196,8 +207,7 @@ public interface Akira.Lib.Models.CanvasItem : Goo.CanvasItemSimple, Goo.CanvasI
 
             return;
         }
-
-        translate (delta_x, delta_y);
+        */
     }
 
     public virtual Cairo.Matrix get_real_transform () {
