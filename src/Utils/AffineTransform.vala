@@ -35,9 +35,6 @@ public class Akira.Utils.AffineTransform : Object {
         double item_x = item.get_coords ("x");
         double item_y = item.get_coords ("y");
 
-        // debug (@"item x: $(item_x) y: $(item_y)");
-        // debug (@"Item has artboard: $(item.artboard != null)");
-
         item.canvas.convert_from_item_space (item, ref item_x, ref item_y);
 
         if (item.artboard != null) {
@@ -304,8 +301,8 @@ public class Akira.Utils.AffineTransform : Object {
         var initial_width = selected_item.get_coords ("width");
         var initial_height = selected_item.get_coords ("height");
 
-        var center_x = initial_width / 2;
-        var center_y = initial_height / 2;
+        var center_x = initial_width / 2 + selected_item.get_coords ("x");
+        var center_y = initial_height / 2 + selected_item.get_coords ("y");
         var do_rotation = true;
 
         if (selected_item.artboard != null) {
@@ -326,16 +323,12 @@ public class Akira.Utils.AffineTransform : Object {
 
         var radians = GLib.Math.atan2 (center_y - y_relative, x_relative - center_x);
         radians = start_radians - radians;
-        var rotation = radians * (180 / Math.PI);
 
-        if (canvas.ctrl_is_pressed) {
-            do_rotation = false;
-        }
+        var rotation = radians * (180 / Math.PI);
 
         if (canvas.ctrl_is_pressed) {
             do_rotation = (int) rotation % ROTATION_FIXED_STEP == 0;
         }
-
 
         if (do_rotation) {
             // Cap new_rotation to the [0, 360] range
@@ -379,8 +372,8 @@ public class Akira.Utils.AffineTransform : Object {
             return;
         }
 
-        var center_x = item.get_coords ("width") / 2;
-        var center_y = item.get_coords ("height") / 2;
+        var center_x = item.get_coords ("width") / 2 + item.get_coords ("x");
+        var center_y = item.get_coords ("height") / 2 + item.get_coords ("y");
 
         var actual_rotation = rotation - item.rotation;
 
